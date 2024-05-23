@@ -54,14 +54,14 @@ def writestoerungen_to_db():
                                     "SELECT headline FROM stoerung WHERE headline LIKE '%" + str(headline) + "%'")
         if exists:
             print("[STOERER]    Keine neuen Störungen gefunden")
-            threading.Timer(20.0, writestoerungen_to_db).start()
+            threading.Timer(1800.0, writestoerungen_to_db).start()
             return
         else:
             print("[STOERER]    Neue Störung gefunden: " + str(headline))
             send_new_stoerung(str(headline))
             execute_query(connection, "INSERT INTO stoerung (headline, content, time) VALUES (?, ?, ?)",
                           (headline, description, time_text))
-            threading.Timer(20.0, writestoerungen_to_db).start()
+            threading.Timer(1800.0, writestoerungen_to_db).start()
 
 
 def clear_stoerungen():
