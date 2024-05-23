@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import sys
 from util import *
@@ -9,13 +8,13 @@ import multiprocessing
 import threading
 import asyncio
 
-from aiogram import Bot, Dispatcher, html
+from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 
-TOKEN =
+TOKEN = os.getenv("TOKEN")
 dp = Dispatcher()
 DB_FILE = r'database.db'
 connection = create_connection(DB_FILE)
@@ -24,7 +23,7 @@ connection = create_connection(DB_FILE)
 # RECEIVE AND PARSE INTERRUPTIONS FROM RSAG SITE
 def parsestoerungen():
     nsite = requests.get('https://www.rsag-online.de/?id=1093')
-    #nsite = codecs.open("test.html", 'r')
+    # nsite = codecs.open("test.html", 'r')
     site = re.sub(r'(\r\n|\n|\r)+', ' ', str(nsite.text))
     soup = BeautifulSoup(site, 'html.parser')
     stoerungen = soup.find_all('div', {"class": "container-fluid stoerungsmeldung"})
@@ -91,10 +90,13 @@ async def command_start_handler(message: Message):
     await message.answer(f"Hallo Matrose, *" + message.from_user.full_name + "*!\nDu wurdest erfolgreich"
                                                                              "in die Datenbank eingetragen und "
                                                                              "bekommst ab jetzt Benachrichtungen,"
-                                                                             "falls es neue Störungen bei der RSAG gibt.\n\n"
-                                                                             "*Weitere Commands:*\n/stoerungen - Zeigt alle"
+                                                                             "falls es neue Störungen bei der RSAG "
+                                                                             "gibt.\n\n"
+                                                                             "*Weitere Commands:*\n/stoerungen - "
+                                                                             "Zeigt alle"
                                                                              "aktuellen Störungen an. \n"
-                                                                             "/stop - Du bekommst keine weiteren Nachrichten. ")
+                                                                             "/stop - Du bekommst keine weiteren "
+                                                                             "Nachrichten. ")
 
 
 @dp.message(Command("stoerungen"))
@@ -117,10 +119,10 @@ def send_new_stoerung(headline):
     ids = []
     for i in query:
         ids.append(str(i[0]))
-    bot = Bot(token=TOKEN)
     for i in ids:
-        #await bot.send_message(chat_id=i, text="*Es gibt eine neue Meldung!*" + headline)
-        url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={i}&text={"**Es gibt eine neue Meldung!**\n" + headline}"
+        # await bot.send_message(chat_id=i, text="*Es gibt eine neue Meldung!*" + headline)
+        url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={i}&text={"**Es gibt eine neue Meldung!**\n" + 
+                                                                                  headline}"
         print(requests.get(url).json())  # this sends the message
 
 
